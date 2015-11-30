@@ -16,6 +16,8 @@ Gem::Specification.new do |s|
 
   s.files       = ['lib/delete_recursively.rb']
 
+  s.required_ruby_version = '>= 2.1.1'
+
   s.add_dependency('activerecord', '~> 4.2')
 
   s.add_development_dependency 'codeclimate-test-reporter', '~> 0.4'
