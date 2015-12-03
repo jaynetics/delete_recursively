@@ -13,9 +13,12 @@ class CreateTestTables < ActiveRecord::Migration
 
     ########
 
+    create_table :delivery_services
+
     create_table :programmers
 
     create_table :pizzas do |t|
+      t.belongs_to :delivery_service
       t.belongs_to :programmer
     end
 

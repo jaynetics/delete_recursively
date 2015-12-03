@@ -1,3 +1,3 @@
 class Post < ActiveRecord::Base
-  has_many :comments, dependent: :delete_recursively
+  has_many :comments, dependent: :destroy
 end

@@ -7,55 +7,65 @@ module DeleteRecursively
   NEW_DEPENDENT_OPTION = :delete_recursively
 
   # override ::valid_dependent_options to make the new
-  # dependent option available to association builders
+  # dependent option available to Association::Builder classes
   module OptionPermission
     def valid_dependent_options
       super + [NEW_DEPENDENT_OPTION]
     end
   end
 
-  # override #handle_dependency to apply the new option if set
+  # override Association#handle_dependency to apply the new option if it is set
   module DependencyHandling
     def handle_dependency
-      super unless DeleteRecursively.enabled_for?(self)
-      # Pass true because #handle_dependency is triggered by destroy
-      # callbacks, and thus the owner is already being deleted.
-      DeleteRecursively.delete_recursively(owner.class, owner.id, true)
+      return super unless DeleteRecursively.enabled_for?(self)
+      if reflection.belongs_to?
+        # can't use ::dependent_ids, owner is already destroyed at this point
+        ids = load_target ? target.id : []
+      else
+        ids = DeleteRecursively.dependent_ids(owner.class, owner.id, reflection)
+      end
+      DeleteRecursively.delete_recursively(reflection, ids)
     end
   end
 
-  def self.enabled_for?(association)
-    association.options[:dependent] == NEW_DEPENDENT_OPTION
-  end
-
-  def self.delete_recursively(record_class, record_ids, only_dependents = false)
-    # delete all passed records
-    record_class.delete(record_ids) unless only_dependents
-
-    # delete all records with a dependency on the passed records
-    record_class.reflect_on_all_associations.each do |assoc|
-      next unless enabled_for?(assoc)
-      dependent_class = assoc.klass
-      dependent_ids = dependent_ids(record_class, record_ids, assoc)
-      delete_recursively(dependent_class, dependent_ids)
+  def self.delete_recursively(reflection, record_ids)
+    record_class = reflection.klass
+    record_class.reflect_on_all_associations.each do |sub_reflection|
+      next unless recurse_on?(sub_reflection)
+      dependent_ids = dependent_ids(record_class, record_ids, sub_reflection)
+      delete_recursively(sub_reflection, dependent_ids)
     end
+    record_class.delete(record_ids) if enabled_for?(reflection)
+    record_class.destroy(record_ids) if destructive?(reflection)
   end
 
-  def self.dependent_ids(record_class, record_ids, assoc)
-    if assoc.belongs_to?
-      records_arel = record_class.where(record_class.primary_key => record_ids)
-      records_arel.pluck(assoc.association_foreign_key).compact
+  def self.recurse_on?(reflection)
+    enabled_for?(reflection) || destructive?(reflection)
+  end
+
+  def self.enabled_for?(reflection)
+    reflection.options[:dependent] == NEW_DEPENDENT_OPTION
+  end
+
+  def self.destructive?(reflection)
+    [:destroy, :destroy_all].include?(reflection.options[:dependent])
+  end
+
+  def self.dependent_ids(owner_class, owner_ids, reflection)
+    if reflection.belongs_to?
+      owners_arel = owner_class.where(owner_class.primary_key => owner_ids)
+      owners_arel.pluck(reflection.association_foreign_key).compact
     else
-      custom_foreign_key = assoc.options[:foreign_key]
-      foreign_key = custom_foreign_key || record_class.to_s.foreign_key
-      assoc.klass.where(foreign_key => record_ids).ids
+      custom_foreign_key = reflection.options[:foreign_key]
+      foreign_key = custom_foreign_key || owner_class.to_s.foreign_key
+      reflection.klass.where(foreign_key => owner_ids).ids
     end
   end
 
   def self.all(record_class)
     record_class.delete_all
-    record_class.reflect_on_all_associations.each do |assoc|
-      all(assoc.klass) if enabled_for?(assoc)
+    record_class.reflect_on_all_associations.each do |reflection|
+      all(reflection.klass) if recurse_on?(reflection)
     end
   end
 end

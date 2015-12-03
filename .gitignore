@@ -18,5 +18,7 @@ binstubs/*
 bundler_stubs/*
 coverage
 Gemfile.lock
+log/
+!log/.keep
 pkg/
 tmp/*

@@ -24,11 +24,15 @@ ActiveRecord::Schema.define(version: 20151110173324) do
     t.integer "post_id"
   end
 
+  create_table "delivery_services", force: :cascade do |t|
+  end
+
   create_table "ingredients", force: :cascade do |t|
     t.integer "dish_id"
   end
 
   create_table "pizzas", force: :cascade do |t|
+    t.integer "delivery_service_id"
     t.integer "programmer_id"
   end
 
