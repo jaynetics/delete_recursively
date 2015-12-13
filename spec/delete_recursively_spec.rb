@@ -92,6 +92,22 @@ describe DeleteRecursively do
       expect(Comment.count).to eq(0)
     end
 
+    it 'takes a criteria argument' do
+      2.times { Blog.create! && Post.create! && Comment.create! }
+      Blog.first.update_attribute(:id, 0)
+      Post.first.update_attribute(:id, 0)
+      Comment.first.update_attribute(:id, 0)
+
+      DeleteRecursively.all(Blog, id: 0)
+
+      expect(Blog.count).to eq(1)
+      expect(Post.count).to eq(1)
+      expect(Comment.count).to eq(1)
+
+      # clean up
+      DeleteRecursively.all(Blog)
+    end
+
     it 'works with a custom :class_name' do
       2.times { DeliveryService.create! && Pizza.create! && Ingredient.create! }
 

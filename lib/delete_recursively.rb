@@ -62,10 +62,10 @@ module DeleteRecursively
     end
   end
 
-  def self.all(record_class)
-    record_class.delete_all
+  def self.all(record_class, criteria = {})
+    record_class.delete_all(criteria)
     record_class.reflect_on_all_associations.each do |reflection|
-      all(reflection.klass) if recurse_on?(reflection)
+      all(reflection.klass, criteria) if recurse_on?(reflection)
     end
   end
 end

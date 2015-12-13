@@ -50,6 +50,12 @@ This will delete *all* Blogs, Posts, and Comments (even orphans):
 DeleteRecursively.all(Blog)
 ```
 
+*::all* accepts a criteria Hash to limit the action's scope, just like *ActiveRecord::delete_all*. It is applied to the passed model and all dependent models, so the corresponding fields must be present on all of them. For instance, this will delete all Blogs, Posts, and Comments created by *evil_user* in the last two days:
+
+```ruby
+DeleteRecursively.all(Blog, created_at: 2.days.ago..Time.now, user_id: evil_user.id)
+```
+
 ## Explanation
 
 Generally speaking, this gem addresses the dilemma that on the one hand a chain of associations with the *dependent: :destroy* option works recursively, but is very inefficient, whereas on the other hand a chain of associations with the *dependent: :delete_all* option is efficient, but works only to a depth of one level.
