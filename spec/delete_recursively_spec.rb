@@ -123,6 +123,16 @@ describe DeleteRecursively do
       DeleteRecursively.all(Blog)
     end
 
+    it 'applies criteria only to models that have corresponding columns' do
+      2.times { Blog.create! && Post.create! && Comment.create! }
+
+      DeleteRecursively.all(Blog, inexistent_column: 'some_value')
+
+      expect(Blog.count).to eq(0)
+      expect(Post.count).to eq(0)
+      expect(Comment.count).to eq(0)
+    end
+
     it 'works with a custom :class_name' do
       2.times { DeliveryService.create! && Pizza.create! && Ingredient.create! }
 

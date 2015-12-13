@@ -50,7 +50,7 @@ This will delete *all* Blogs, Posts, and Comments (even orphans):
 DeleteRecursively.all(Blog)
 ```
 
-*::all* accepts a criteria Hash to limit the action's scope, just like *ActiveRecord::delete_all*. It is applied to the passed model and all dependent models, so the corresponding fields must be present on all of them. For instance, this will delete all Blogs, Posts, and Comments created by *evil_user* in the last two days:
+*::all* accepts a criteria Hash to limit the action's scope, much like *ActiveRecord::delete_all*. For any model in the chain that has the corresponding columns, these criteria will limit which records are deleted. For instance, assuming that all our models have timestamps and a user_id, this will delete all Blogs, Posts, and Comments created by *evil_user* in the last two days:
 
 ```ruby
 DeleteRecursively.all(Blog, created_at: 2.days.ago..Time.now, user_id: evil_user.id)

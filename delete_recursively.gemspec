@@ -2,7 +2,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'delete_recursively'
-  s.version     = '0.9.2'
+  s.version     = '0.9.3'
   s.license     = 'MIT'
 
   s.summary     = 'Delete ActiveRecords efficiently'
