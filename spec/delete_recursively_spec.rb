@@ -43,7 +43,22 @@ describe DeleteRecursively do
       expect(Box.count(id: pizza.box.id)).to eq(0)
     end
 
-    it 'works on belongs_to: associations' do
+    # belongs_to is the only association type that needs a unique handling if it
+    # is present on the first destroyed record (the callee or "point of entry"),
+    # and thus the only type that needs two different tests.
+
+    it 'works on belongs_to: associations of the callee' do
+      pizza = Pizza.new
+      pizza.programmer = Programmer.create!
+      pizza.save!
+
+      pizza.destroy!
+
+      expect(Pizza.count(id: pizza.id)).to eq(0)
+      expect(Programmer.count(id: pizza.programmer.id)).to eq(0)
+    end
+
+    it 'works on belongs_to: associations further down the chain' do
       delivery_service = DeliveryService.create!
       pizza = delivery_service.pizzas.new
       pizza.programmer = Programmer.create!
