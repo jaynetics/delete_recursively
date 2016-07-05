@@ -1,5 +1,5 @@
 class Pizza < ActiveRecord::Base
-  belongs_to :programmer, dependent: :delete_recursively # lest he starve
+  belongs_to :programmer, optional: true, dependent: :delete_recursively # lest he starve
   has_one :box, dependent: :delete_recursively
   has_many :toppings, class_name: Ingredient,
                       foreign_key: :dish_id,

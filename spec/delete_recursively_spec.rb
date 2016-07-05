@@ -12,9 +12,9 @@ describe DeleteRecursively do
 
       blog.destroy!
 
-      expect(Blog.count(id: blog.id)).to eq(0)
-      expect(Post.count(id: posts.map(&:id))).to eq(0)
-      expect(Comment.count(id: comments.map(&:id))).to eq(0)
+      expect(Blog.where(id: blog.id).count).to eq(0)
+      expect(Post.where(id: posts.map(&:id)).count).to eq(0)
+      expect(Comment.where(id: comments.map(&:id)).count).to eq(0)
     end
 
     it 'uses #destroy to delete records associated as dependent: :destroy' do
@@ -38,9 +38,9 @@ describe DeleteRecursively do
 
       delivery_service.destroy!
 
-      expect(DeliveryService.count(id: delivery_service.id)).to eq(0)
-      expect(Pizza.count(id: pizza.id)).to eq(0)
-      expect(Box.count(id: pizza.box.id)).to eq(0)
+      expect(DeliveryService.where(id: delivery_service.id).count).to eq(0)
+      expect(Pizza.where(id: pizza.id).count).to eq(0)
+      expect(Box.where(id: pizza.box.id).count).to eq(0)
     end
 
     # belongs_to is the only association type that needs a unique handling if it
@@ -54,8 +54,8 @@ describe DeleteRecursively do
 
       pizza.destroy!
 
-      expect(Pizza.count(id: pizza.id)).to eq(0)
-      expect(Programmer.count(id: pizza.programmer.id)).to eq(0)
+      expect(Pizza.where(id: pizza.id).count).to eq(0)
+      expect(Programmer.where(id: pizza.programmer.id).count).to eq(0)
     end
 
     it 'works on belongs_to: associations further down the chain' do
@@ -66,9 +66,9 @@ describe DeleteRecursively do
 
       delivery_service.destroy!
 
-      expect(DeliveryService.count(id: delivery_service.id)).to eq(0)
-      expect(Pizza.count(id: pizza.id)).to eq(0)
-      expect(Programmer.count(id: pizza.programmer.id)).to eq(0)
+      expect(DeliveryService.where(id: delivery_service.id).count).to eq(0)
+      expect(Pizza.where(id: pizza.id).count).to eq(0)
+      expect(Programmer.where(id: pizza.programmer.id).count).to eq(0)
     end
 
     it 'works with a custom :class_name' do
@@ -79,9 +79,9 @@ describe DeleteRecursively do
 
       delivery_service.destroy!
 
-      expect(DeliveryService.count(id: delivery_service.id)).to eq(0)
-      expect(Pizza.count(id: pizza.id)).to eq(0)
-      expect(Ingredient.count(id: toppings.map(&:id))).to eq(0)
+      expect(DeliveryService.where(id: delivery_service.id).count).to eq(0)
+      expect(Pizza.where(id: pizza.id).count).to eq(0)
+      expect(Ingredient.where(id: toppings.map(&:id)).count).to eq(0)
     end
 
     it 'works on records with a custom :primary_key' do
@@ -91,8 +91,8 @@ describe DeleteRecursively do
 
       project.destroy!
 
-      expect(Project.count(my_primary_key: project.my_primary_key)).to eq(0)
-      expect(Task.count(my_primary_key: tasks.map(&:my_primary_key))).to eq(0)
+      expect(Project.where(my_primary_key: project.my_primary_key).count).to eq(0)
+      expect(Task.where(my_primary_key: tasks.map(&:my_primary_key)).count).to eq(0)
     end
   end
 

@@ -66,7 +66,7 @@ module DeleteRecursively
     applicable_criteria = criteria.select do |column_name, _value|
       record_class.column_names.include?(column_name.to_s)
     end
-    record_class.delete_all(applicable_criteria)
+    record_class.where(applicable_criteria).delete_all
     record_class.reflect_on_all_associations.each do |reflection|
       all(reflection.klass, criteria) if recurse_on?(reflection)
     end

@@ -2,7 +2,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'delete_recursively'
-  s.version     = '0.9.3'
+  s.version     = '0.9.4'
   s.license     = 'MIT'
 
   s.summary     = 'Delete ActiveRecords efficiently'
@@ -18,12 +18,12 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 2.1.1'
 
-  s.add_dependency('activerecord', '~> 4.2')
+  s.add_dependency('activerecord', '~> 5.0')
 
-  s.add_development_dependency 'codeclimate-test-reporter', '~> 0.4'
-  s.add_development_dependency 'rails', '~> 4.2'
-  s.add_development_dependency 'rake', '~> 10.4'
-  s.add_development_dependency 'rspec', '~> 3.3'
-  s.add_development_dependency 'rspec-rails', '~> 3.3'
+  s.add_development_dependency 'codeclimate-test-reporter', '~> 0.6'
+  s.add_development_dependency 'rails', '~> 5.0'
+  s.add_development_dependency 'rake', '~> 10.5'
+  s.add_development_dependency 'rspec', '~> 3.5'
+  s.add_development_dependency 'rspec-rails', '~> 3.5'
   s.add_development_dependency 'sqlite3', '~> 1.3'
 end
