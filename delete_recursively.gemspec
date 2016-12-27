@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency('activerecord', '~> 5.0')
 
-  s.add_development_dependency 'codeclimate-test-reporter', '~> 0.6'
+  s.add_development_dependency 'codeclimate-test-reporter', '~> 1.0'
   s.add_development_dependency 'rails', '~> 5.0'
   s.add_development_dependency 'rake', '~> 11.3'
   s.add_development_dependency 'rspec', '~> 3.5'
