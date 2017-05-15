@@ -26,16 +26,16 @@ Add, install, or require `delete_recursively`.
 Assume we have these classes:
 
 ```ruby
-class Blog < ActiveRecord::Base
+class Blog < ApplicationRecord
   has_many :posts, dependent: :delete_recursively
 end
 
-class Post < ActiveRecord::Base
+class Post < ApplicationRecord
   belongs_to :blog
-  has_many :comments, dependent: :delete_recursively
+  has_many :comments, dependent: :delete
 end
 
-class Comment < ActiveRecord::Base
+class Comment < ApplicationRecord
   belongs_to :post
 end
 ```

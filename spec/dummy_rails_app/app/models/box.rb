@@ -1,1 +1,1 @@
-class Box < ActiveRecord::Base; end
+class Box < ApplicationRecord; end

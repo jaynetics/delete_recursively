@@ -1,1 +1,1 @@
-class Programmer < ActiveRecord::Base; end
+class Programmer < ApplicationRecord; end

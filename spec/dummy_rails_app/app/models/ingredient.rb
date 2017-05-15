@@ -1,1 +1,1 @@
-class Ingredient < ActiveRecord::Base; end
+class Ingredient < ApplicationRecord; end

@@ -1,5 +1,8 @@
 ###
-class CreateTestTables < ActiveRecord::Migration
+parent = ActiveRecord::Migration
+parent = parent[5.0] if parent.respond_to?(:[])
+
+class CreateTestTables < parent
   def change
     create_table :blogs
 
