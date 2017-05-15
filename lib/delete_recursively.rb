@@ -4,6 +4,8 @@
 # Adds a new dependent: option to ActiveRecord associations.
 #
 module DeleteRecursively
+  require_relative File.join('delete_recursively', 'version')
+
   NEW_DEPENDENT_OPTION = :delete_recursively
 
   # override ::valid_dependent_options to make the new

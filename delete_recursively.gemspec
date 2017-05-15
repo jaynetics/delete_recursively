@@ -1,8 +1,12 @@
 # encoding: utf-8
+
+dir = File.expand_path('..', __FILE__)
+require File.join(dir, 'lib', 'delete_recursively', 'version')
+
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'delete_recursively'
-  s.version     = '0.9.4'
+  s.version     = DeleteRecursively::VERSION
   s.license     = 'MIT'
 
   s.summary     = 'Delete ActiveRecords efficiently'
