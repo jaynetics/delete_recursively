@@ -28,47 +28,80 @@ module DeleteRecursively
     end
   end
 
-  def self.delete_recursively(reflection, record_ids)
-    record_class = reflection.klass
-    record_class.reflect_on_all_associations.each do |sub_reflection|
-      next unless recurse_on?(sub_reflection)
-      dependent_ids = dependent_ids(record_class, record_ids, sub_reflection)
-      delete_recursively(sub_reflection, dependent_ids)
+  class << self
+    def delete_recursively(reflection, record_ids)
+      record_class = reflection.klass
+      if recurse_on?(reflection)
+        record_class.reflect_on_all_associations.each do |sub_reflection|
+          dependent_ids = dependent_ids(record_class, record_ids, sub_reflection)
+          delete_recursively(sub_reflection, dependent_ids)
+        end
+      end
+      destroy_or_delete(reflection, record_class, record_ids)
     end
-    record_class.delete(record_ids) if enabled_for?(reflection)
-    record_class.destroy(record_ids) if destructive?(reflection)
-  end
 
-  def self.recurse_on?(reflection)
-    enabled_for?(reflection) || destructive?(reflection)
-  end
-
-  def self.enabled_for?(reflection)
-    reflection.options[:dependent] == NEW_DEPENDENT_OPTION
-  end
-
-  def self.destructive?(reflection)
-    [:destroy, :destroy_all].include?(reflection.options[:dependent])
-  end
-
-  def self.dependent_ids(owner_class, owner_ids, reflection)
-    if reflection.belongs_to?
-      owners_arel = owner_class.where(owner_class.primary_key => owner_ids)
-      owners_arel.pluck(reflection.association_foreign_key).compact
-    else
-      custom_foreign_key = reflection.options[:foreign_key]
-      foreign_key = custom_foreign_key || owner_class.to_s.foreign_key
-      reflection.klass.where(foreign_key => owner_ids).ids
+    def destroy_or_delete(reflection, record_class, record_ids)
+      if destructive?(reflection)
+        record_class.destroy(record_ids)
+      elsif enabled_for?(reflection) || deleting?(reflection)
+        record_class.delete(record_ids)
+      end
     end
-  end
 
-  def self.all(record_class, criteria = {})
-    applicable_criteria = criteria.select do |column_name, _value|
-      record_class.column_names.include?(column_name.to_s)
+    def recurse_on?(reflection)
+      enabled_for?(reflection) || destructive?(reflection)
     end
-    record_class.where(applicable_criteria).delete_all
-    record_class.reflect_on_all_associations.each do |reflection|
-      all(reflection.klass, criteria) if recurse_on?(reflection)
+
+    def enabled_for?(reflection)
+      reflection.options[:dependent] == NEW_DEPENDENT_OPTION
+    end
+
+    def destructive?(reflection)
+      [:destroy, :destroy_all].include?(reflection.options[:dependent])
+    end
+
+    def deleting?(reflection)
+      [:delete, :delete_all].include?(reflection.options[:dependent])
+    end
+
+    def dependent_ids(owner_class, owner_ids, reflection)
+      if reflection.belongs_to?
+        owners_arel = owner_class.where(owner_class.primary_key => owner_ids)
+        owners_arel.pluck(reflection.association_foreign_key).compact
+      else
+        owner_foreign_key = foreign_key(owner_class, reflection)
+        reflection.klass.where(owner_foreign_key => owner_ids).ids
+      end
+    end
+
+    def inverse_through_reflection(reflection)
+      through_class = reflection.through_reflection.klass
+      reflection.klass.reflect_on_all_associations
+        .map(&:through_reflection)
+        .find { |tr| tr && tr.klass == through_class }
+    end
+
+    def foreign_key(owner_class, reflection)
+      custom_foreign_key = reflection && reflection.options[:foreign_key]
+      custom_foreign_key || owner_class.to_s.foreign_key
+    end
+
+    def all(record_class, criteria = {})
+      record_class.reflect_on_all_associations.each do |reflection|
+        if recurse_on?(reflection)
+          all(reflection.klass, criteria)
+        elsif deleting?(reflection)
+          delete_with_applicable_criteria(reflection.klass, criteria)
+        end
+      end
+      delete_with_applicable_criteria(record_class, criteria)
+    end
+
+    def delete_with_applicable_criteria(record_class, criteria)
+      applicable_criteria = criteria.select do |column_name, _value|
+        record_class.column_names.include?(column_name.to_s)
+      end
+      record_class.where(applicable_criteria).delete_all
     end
   end
 end

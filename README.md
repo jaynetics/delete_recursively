@@ -45,7 +45,9 @@ This will delete `my_blog`, all of it's posts, and all comments belonging to any
 my_blog.destroy
 ```
 
-This will delete **all** Blogs, Posts, and Comments (even orphans):
+Note that using `dependent: :delete` ends the recursion. If the Comment model above had any associations, those would not be touched.
+
+There is also the utility command `::all` for mass operations. This will delete **all** Blogs, Posts, and Comments (even orphans):
 ```ruby
 DeleteRecursively.all(Blog)
 ```

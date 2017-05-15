@@ -40,5 +40,24 @@ class CreateTestTables < ActiveRecord::Migration
       t.string :my_primary_key
       t.belongs_to :project
     end
+
+    ########
+
+    create_table :renters
+
+    create_table :houses
+
+    create_table :rental_agreements do |t|
+      t.belongs_to :renter
+      t.belongs_to :house
+    end
+
+    create_table :letterboxes do |t|
+      t.belongs_to :renter
+    end
+
+    create_table :letters do |t|
+      t.belongs_to :letterbox
+    end
   end
 end

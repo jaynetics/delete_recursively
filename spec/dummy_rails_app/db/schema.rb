@@ -13,41 +13,60 @@
 
 ActiveRecord::Schema.define(version: 20151110173324) do
 
-  create_table "blogs", force: :cascade do |t|
+  create_table "blogs", force: true do |t|
   end
 
-  create_table "boxes", force: :cascade do |t|
+  create_table "boxes", force: true do |t|
     t.integer "pizza_id"
   end
 
-  create_table "comments", force: :cascade do |t|
+  create_table "comments", force: true do |t|
     t.integer "post_id"
   end
 
-  create_table "delivery_services", force: :cascade do |t|
+  create_table "delivery_services", force: true do |t|
   end
 
-  create_table "ingredients", force: :cascade do |t|
+  create_table "houses", force: true do |t|
+  end
+
+  create_table "ingredients", force: true do |t|
     t.integer "dish_id"
   end
 
-  create_table "pizzas", force: :cascade do |t|
+  create_table "letterboxes", force: true do |t|
+    t.integer "renter_id"
+  end
+
+  create_table "letters", force: true do |t|
+    t.integer "letterbox_id"
+  end
+
+  create_table "pizzas", force: true do |t|
     t.integer "delivery_service_id"
     t.integer "programmer_id"
   end
 
-  create_table "posts", force: :cascade do |t|
+  create_table "posts", force: true do |t|
     t.integer "blog_id"
   end
 
-  create_table "programmers", force: :cascade do |t|
+  create_table "programmers", force: true do |t|
   end
 
-  create_table "projects", force: :cascade do |t|
+  create_table "projects", force: true do |t|
     t.string "my_primary_key"
   end
 
-  create_table "tasks", force: :cascade do |t|
+  create_table "rental_agreements", force: true do |t|
+    t.integer "renter_id"
+    t.integer "house_id"
+  end
+
+  create_table "renters", force: true do |t|
+  end
+
+  create_table "tasks", force: true do |t|
     t.string  "my_primary_key"
     t.integer "project_id"
   end

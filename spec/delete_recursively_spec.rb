@@ -43,6 +43,42 @@ describe DeleteRecursively do
       expect(Box.where(id: pizza.box.id).count).to eq(0)
     end
 
+    it 'works on has_many: :through associations' do
+      house = House.create!
+      renters = [house.renters.create!,
+                 house.renters.create!]
+      letterboxes = [renters.first.letterboxes.create!,
+                     renters.first.letterboxes.create!,
+                     renters.last.letterboxes.create!,
+                     renters.last.letterboxes.create!]
+
+      house.destroy!
+
+      expect(House.where(id: house.id).count).to eq(0)
+      expect(Renter.where(id: renters.map(&:id)).count).to eq(0)
+      expect(Letterbox.where(id: letterboxes.map(&:id)).count).to eq(0)
+    end
+
+    it 'deletes sub-associations with dependent: :delete, but none below those' do
+      house = House.create!
+      renters = [house.renters.create!,
+                 house.renters.create!]
+      letterboxes = [renters.first.letterboxes.create!,
+                     renters.first.letterboxes.create!,
+                     renters.last.letterboxes.create!,
+                     renters.last.letterboxes.create!]
+      letters = [letterboxes.first.letters.create!,
+                 letterboxes.first.letters.create!,
+                 letterboxes.last.letters.create!]
+
+      house.destroy!
+
+      expect(House.where(id: house.id).count).to eq(0)
+      expect(Renter.where(id: renters.map(&:id)).count).to eq(0)
+      expect(Letterbox.where(id: letterboxes.map(&:id)).count).to eq(0)
+      expect(Letter.where(id: letters.map(&:id)).count).to eq(3)
+    end
+
     # belongs_to is the only association type that needs a unique handling if it
     # is present on the first destroyed record (the callee or "point of entry"),
     # and thus the only type that needs two different tests.
@@ -105,6 +141,26 @@ describe DeleteRecursively do
       expect(Blog.count).to eq(0)
       expect(Post.count).to eq(0)
       expect(Comment.count).to eq(0)
+    end
+
+    it 'deletes sub-associations with dependent: :delete, but none below those' do
+      house = House.create!
+      renters = [house.renters.create!,
+                 house.renters.create!]
+      letterboxes = [renters.first.letterboxes.create!,
+                     renters.first.letterboxes.create!,
+                     renters.last.letterboxes.create!,
+                     renters.last.letterboxes.create!]
+      letters = [letterboxes.first.letters.create!,
+                 letterboxes.first.letters.create!,
+                 letterboxes.last.letters.create!]
+
+      DeleteRecursively.all(House)
+
+      expect(House.where(id: house.id).count).to eq(0)
+      expect(Renter.where(id: renters.map(&:id)).count).to eq(0)
+      expect(Letterbox.where(id: letterboxes.map(&:id)).count).to eq(0)
+      expect(Letter.where(id: letters.map(&:id)).count).to eq(3)
     end
 
     it 'takes a criteria argument' do
