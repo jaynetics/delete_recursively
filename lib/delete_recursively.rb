@@ -68,10 +68,25 @@ module DeleteRecursively
       if reflection.belongs_to?
         owners_arel = owner_class.where(owner_class.primary_key => owner_ids)
         owners_arel.pluck(reflection.association_foreign_key).compact
+      elsif reflection.through_reflection
+        dependent_ids_with_through_option(owner_class, owner_ids, reflection)
       else
         owner_foreign_key = foreign_key(owner_class, reflection)
         reflection.klass.where(owner_foreign_key => owner_ids).ids
       end
+    end
+
+    def dependent_ids_with_through_option(owner_class, owner_ids, reflection)
+      through_reflection = reflection.through_reflection
+      owner_foreign_key = foreign_key(owner_class, through_reflection)
+
+      dependent_class = reflection.klass
+      dependent_through_reflection = inverse_through_reflection(reflection)
+      dependent_foreign_key =
+        foreign_key(dependent_class, dependent_through_reflection)
+
+      through_reflection.klass
+        .where(owner_foreign_key => owner_ids).pluck(dependent_foreign_key)
     end
 
     def inverse_through_reflection(reflection)
