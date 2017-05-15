@@ -29,6 +29,10 @@ class CreateTestTables < parent
       t.belongs_to :pizza
     end
 
+    create_table :flavors do |t|
+      t.belongs_to :pizza
+    end
+
     create_table :ingredients do |t|
       t.belongs_to :dish
     end

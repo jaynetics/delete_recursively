@@ -4,4 +4,5 @@ class Pizza < ApplicationRecord
   has_many :toppings, class_name: 'Ingredient',
                       foreign_key: :dish_id,
                       dependent: :delete_recursively
+  has_many :flavors
 end

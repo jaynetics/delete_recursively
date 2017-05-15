@@ -79,6 +79,19 @@ describe DeleteRecursively do
       expect(Letter.where(id: letters.map(&:id)).count).to eq(3)
     end
 
+    it 'does not delete records without a dependent option' do
+      delivery_service = DeliveryService.create!
+      pizza = delivery_service.pizzas.new
+      pizza.programmer = Programmer.create!
+      pizza.save!
+
+      flavor = pizza.flavors.create!
+
+      delivery_service.destroy!
+
+      expect(Flavor.where(id: flavor.id).count).to eq(1)
+    end
+
     # belongs_to is the only association type that needs a unique handling if it
     # is present on the first destroyed record (the callee or "point of entry"),
     # and thus the only type that needs two different tests.
