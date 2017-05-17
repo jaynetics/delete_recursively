@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # DeleteRecursively
 #
@@ -35,8 +37,8 @@ module DeleteRecursively
       record_class = reflection.klass
       if recurse_on?(reflection)
         record_class.reflect_on_all_associations.each do |sub_reflection|
-          dependent_ids = dependent_ids(record_class, record_ids, sub_reflection)
-          delete_recursively(sub_reflection, dependent_ids)
+          sub_ref_ids = dependent_ids(record_class, record_ids, sub_reflection)
+          delete_recursively(sub_reflection, sub_ref_ids)
         end
       end
       destroy_or_delete(reflection, record_class, record_ids)
@@ -59,11 +61,11 @@ module DeleteRecursively
     end
 
     def destructive?(reflection)
-      [:destroy, :destroy_all].include?(reflection.options[:dependent])
+      %i[destroy destroy_all].include?(reflection.options[:dependent])
     end
 
     def deleting?(reflection)
-      [:delete, :delete_all].include?(reflection.options[:dependent])
+      %i[delete delete_all].include?(reflection.options[:dependent])
     end
 
     def dependent_ids(owner_class, owner_ids, reflection)
@@ -88,14 +90,15 @@ module DeleteRecursively
         foreign_key(dependent_class, dependent_through_reflection)
 
       through_reflection.klass
-        .where(owner_foreign_key => owner_ids).pluck(dependent_foreign_key)
+                        .where(owner_foreign_key => owner_ids)
+                        .pluck(dependent_foreign_key)
     end
 
     def inverse_through_reflection(reflection)
       through_class = reflection.through_reflection.klass
       reflection.klass.reflect_on_all_associations
-        .map(&:through_reflection)
-        .find { |tr| tr && tr.klass == through_class }
+                .map(&:through_reflection)
+                .find { |thr_ref| thr_ref && thr_ref.klass == through_class }
     end
 
     def foreign_key(owner_class, reflection)
@@ -125,7 +128,7 @@ end
 
 require 'active_record'
 
-%w(BelongsTo HasMany HasOne).each do |assoc_name|
+%w[BelongsTo HasMany HasOne].each do |assoc_name|
   assoc_builder = ActiveRecord::Associations::Builder.const_get(assoc_name)
   assoc_builder.singleton_class.prepend(DeleteRecursively::OptionPermission)
 
