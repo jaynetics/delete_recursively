@@ -18,7 +18,8 @@ Gem::Specification.new do |s|
   s.email       = 'janosch84@gmail.com'
   s.homepage    = 'https://github.com/janosch-x/delete_recursively'
 
-  s.files       = ['lib/delete_recursively.rb']
+  s.files       = ['lib/delete_recursively.rb',
+                   'lib/delete_recursively/version.rb']
 
   s.required_ruby_version = '>= 2.1.1'
 
