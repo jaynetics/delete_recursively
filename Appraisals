@@ -1,8 +1,8 @@
 if Gem::Version.new(RUBY_VERSION.dup) < Gem::Version.new('2.4.0')
-  appraise 'activerecord-4.1.14' do
-    gem 'activerecord', '4.1.14'
+  appraise 'activerecord-4.1.16' do
+    gem 'activerecord', '4.1.16'
     group :development do
-      gem 'rails', '4.1.14'
+      gem 'rails', '4.1.16'
     end
   end
 end
@@ -14,10 +14,10 @@ appraise 'activerecord-4.2.8' do
   end
 end
 
-appraise 'activerecord-5.0.3' do
-  gem 'activerecord', '5.0.3'
+appraise 'activerecord-5.0.6' do
+  gem 'activerecord', '5.0.6'
   group :development do
-    gem 'rails', '5.0.3'
+    gem 'rails', '5.0.6'
   end
 end
 

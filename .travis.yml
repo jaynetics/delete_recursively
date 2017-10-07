@@ -1,25 +1,22 @@
 rvm:
-  - 2.1.1
-  - 2.2.4
-  - 2.3.1
+  - 2.1.10
+  - 2.2.8
+  - 2.3.5
   - 2.4.2
 
 gemfile:
-  - gemfiles/activerecord_4.1.14.gemfile
-  - gemfiles/activerecord_4.2.8.gemfile
-  - gemfiles/activerecord_5.0.3.gemfile
+  - gemfiles/activerecord_4.1.16.gemfile
+  - gemfiles/activerecord_4.2.10.gemfile
+  - gemfiles/activerecord_5.0.6.gemfile
   - gemfiles/activerecord_5.1.4.gemfile
 
 matrix:
   exclude:
     # rails 5 requires ruby 2.2.2+
-    - gemfile: gemfiles/activerecord_5.0.3.gemfile
-      rvm: 2.1.1
+    - gemfile: gemfiles/activerecord_5.0.6.gemfile
+      rvm: 2.1.10
     - gemfile: gemfiles/activerecord_5.1.4.gemfile
-      rvm: 2.1.1
-    # activerecord < 4.2.8 will not run on Ruby 2.4+
-    - gemfile: gemfiles/activerecord_4.1.14.gemfile
-      rvm: 2.4.2
+      rvm: 2.1.10
 
 addons:
   code_climate:

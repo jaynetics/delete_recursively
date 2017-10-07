@@ -2,10 +2,10 @@
 
 source "https://rubygems.org"
 
-gem "activerecord", "4.2.8"
+gem "activerecord", "5.0.6"
 
 group :development do
-  gem "rails", "4.2.8"
+  gem "rails", "5.0.6"
 end
 
 gemspec path: "../"
