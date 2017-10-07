@@ -17,6 +17,9 @@ matrix:
       rvm: 2.1.10
     - gemfile: gemfiles/activerecord_5.1.4.gemfile
       rvm: 2.1.10
+    # activerecord < 4.2.8 will not run on Ruby 2.4+
+    - gemfile: gemfiles/activerecord_4.1.16.gemfile
+      rvm: 2.4.2
 
 addons:
   code_climate:
