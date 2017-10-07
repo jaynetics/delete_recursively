@@ -21,9 +21,9 @@ appraise 'activerecord-5.0.3' do
   end
 end
 
-appraise 'activerecord-5.1.1' do
-  gem 'activerecord', '5.1.1'
+appraise 'activerecord-5.1.4' do
+  gem 'activerecord', '5.1.4'
   group :development do
-    gem 'rails', '5.1.1'
+    gem 'rails', '5.1.4'
   end
 end
