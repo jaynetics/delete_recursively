@@ -3,9 +3,7 @@
 
 [![Gem Version](https://badge.fury.io/rb/delete_recursively.svg)](http://badge.fury.io/rb/delete_recursively)
 [![Build Status](https://travis-ci.org/janosch-x/delete_recursively.svg?branch=master)](https://travis-ci.org/janosch-x/delete_recursively)
-[![Dependency Status](https://gemnasium.com/janosch-x/delete_recursively.svg)](https://gemnasium.com/janosch-x/delete_recursively)
 [![Code Climate](https://codeclimate.com/github/janosch-x/delete_recursively/badges/gpa.svg)](https://codeclimate.com/github/janosch-x/delete_recursively)
-[![Test Coverage](https://codeclimate.com/github/janosch-x/delete_recursively/badges/coverage.svg)](https://codeclimate.com/github/janosch-x/delete_recursively/coverage)
 
 This gem adds a new option for ActiveRecord associations:
 
@@ -70,7 +68,7 @@ Now let's assume these models are chained together with `dependent: :destroy`.
 
 In that case, destroying the Blog record will instantiate all Posts and Comments and various related objects, and destroy all of these records individually. That means instantiating 10.000s of objects and performing countless SQL calls.
 
-With `dependent: :delete_recursively`, that will take just a tiny, fixed number of objects and a tiny, fixed number of SQL calls. The number of records no longer matters, because associated records are found by evaluating associations defined on the model class and finding and deleting dependent records in batches. 
+With `dependent: :delete_recursively`, that will take just a tiny, fixed number of objects and a tiny, fixed number of SQL calls. The number of records no longer matters, because associated records are found by evaluating associations defined on the model class and finding and deleting dependent records in batches.
 
 ## Credits
 

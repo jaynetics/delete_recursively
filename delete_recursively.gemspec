@@ -26,7 +26,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'activerecord', '>= 4.1.14', '< 6.0.0'
 
   s.add_development_dependency 'appraisal', '~> 2.2'
-  s.add_development_dependency 'codeclimate-test-reporter', '~> 1.0'
   s.add_development_dependency 'rails', '>= 4.1.14', '< 6.0.0'
   s.add_development_dependency 'rake', '~> 11.3'
   s.add_development_dependency 'rspec', '~> 3.5'

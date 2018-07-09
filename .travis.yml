@@ -20,9 +20,3 @@ matrix:
     # activerecord < 4.2.8 will not run on Ruby 2.4+
     - gemfile: gemfiles/activerecord_4.1.16.gemfile
       rvm: 2.4.2
-
-addons:
-  code_climate:
-    repo_token: 3717b597b3cfb358b4fa351f678e19be53e753d60f35a9172b3a5d56549c01b7
-after_success:
-  - bundle exec codeclimate-test-reporter
