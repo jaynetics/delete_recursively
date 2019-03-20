@@ -1,4 +1,3 @@
-
 require 'spec_helper'
 
 describe DeleteRecursively do
@@ -138,10 +137,17 @@ describe DeleteRecursively do
       tasks = [project.tasks.create!(my_primary_key: 'task_1'),
                project.tasks.create!(my_primary_key: 'task_2')]
 
+      other_project = Project.create!(my_primary_key: 'project_2')
+      other_tasks = [other_project.tasks.create!(my_primary_key: 'task_3'),
+                     other_project.tasks.create!(my_primary_key: 'task_4')]
+
       project.destroy!
 
       expect(Project.where(my_primary_key: project.my_primary_key).count).to eq(0)
       expect(Task.where(my_primary_key: tasks.map(&:my_primary_key)).count).to eq(0)
+
+      expect(Project.where(my_primary_key: other_project.my_primary_key).count).to eq(1)
+      expect(Task.where(my_primary_key: other_tasks.map(&:my_primary_key)).count).to eq(2)
     end
   end
 

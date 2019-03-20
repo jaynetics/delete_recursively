@@ -43,7 +43,7 @@ ActiveRecord::Schema.define(version: 20151110173325) do
 
   create_table 'tasks', force: :cascade do |t|
     t.string 'my_primary_key'
-    t.integer 'project_id'
+    t.string 'project_id'
   end
 
   ######
