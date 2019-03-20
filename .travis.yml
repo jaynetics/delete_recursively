@@ -13,8 +13,11 @@ gemfile:
 before_install:
   - gem install bundler -v 1.17.3
 
-# rails 6 requires ruby 2.5+
 matrix:
   exclude:
+    # rails 6 requires ruby 2.5+
     - rvm: 2.3
       gemfile: gemfiles/activerecord_6.0.0.beta3.gemfile
+    # rails 4 requires an older bundler
+    - rvm: ruby-head
+      gemfile: gemfiles/activerecord_4.2.11.1.gemfile
