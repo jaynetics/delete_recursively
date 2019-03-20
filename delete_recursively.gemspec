@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
 
   s.authors     = ['Janosch Müller']
   s.email       = 'janosch84@gmail.com'
-  s.homepage    = 'https://github.com/janosch-x/delete_recursively'
+  s.homepage    = 'https://github.com/jaynetics/delete_recursively'
 
   s.files       = ['lib/delete_recursively.rb',
                    'lib/delete_recursively/version.rb']
