@@ -1,27 +1,15 @@
-appraise 'activerecord-4.2.10' do
-  gem 'activerecord', '4.2.10'
-  group :development do
-    gem 'rails', '4.2.10'
-  end
-end
+%w[
+  4.2.11.1
+  5.0.7.2
+  5.1.6.2
+  5.2.2.1
+  6.0.0.beta3
+].each do |version|
+  appraise "activerecord-#{version}" do
+    gem 'activerecord', version
 
-appraise 'activerecord-5.0.7' do
-  gem 'activerecord', '5.0.7'
-  group :development do
-    gem 'rails', '5.0.7'
-  end
-end
-
-appraise 'activerecord-5.1.6' do
-  gem 'activerecord', '5.1.6'
-  group :development do
-    gem 'rails', '5.1.6'
-  end
-end
-
-appraise 'activerecord-5.2.0' do
-  gem 'activerecord', '5.2.0'
-  group :development do
-    gem 'rails', '5.2.0'
+    group :development do
+      gem 'rails', version
+    end
   end
 end

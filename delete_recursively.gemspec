@@ -23,12 +23,13 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 2.1.1'
 
-  s.add_dependency 'activerecord', '>= 4.1.14', '< 6.0.0'
+  s.add_dependency 'activerecord', '>= 4.1.14', '< 7.0.0'
 
   s.add_development_dependency 'appraisal', '~> 2.2'
-  s.add_development_dependency 'rails', '>= 4.1.14', '< 6.0.0'
-  s.add_development_dependency 'rake', '~> 11.3'
-  s.add_development_dependency 'rspec', '~> 3.5'
-  s.add_development_dependency 'rspec-rails', '~> 3.5'
-  s.add_development_dependency 'sqlite3', '~> 1.3'
+  s.add_development_dependency 'rails', '>= 4.1.14', '< 7.0.0'
+  s.add_development_dependency 'rake', '~> 12.3'
+  s.add_development_dependency 'rspec', '~> 3.8'
+  s.add_development_dependency 'rspec-rails', '~> 3.8'
+  # sqlite3 1.4 won't work with older rails versions
+  s.add_development_dependency 'sqlite3', '~> 1.3.13'
 end
