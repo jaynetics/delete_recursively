@@ -31,6 +31,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rake', '~> 12.3'
   s.add_development_dependency 'rspec', '~> 3.8'
   s.add_development_dependency 'rspec-rails', '~> 3.8'
-  # sqlite3 1.4 won't work with older rails versions
-  s.add_development_dependency 'sqlite3', '~> 1.3.13'
+  s.add_development_dependency 'sqlite3', '~> 1.4'
 end
