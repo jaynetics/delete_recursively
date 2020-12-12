@@ -1,7 +1,7 @@
 %w[
   5.1.7
-  5.2.4.1
-  6.0.2.1
+  5.2.4.4
+  6.1.0
 ].each do |version|
   appraise "activerecord-#{version}" do
     gem 'activerecord', version
