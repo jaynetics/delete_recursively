@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         ruby: [ '2.3', '2.7', 'ruby-head' ]
-        activerecord: [ '5.1.7', '5.2.44', '6.1.0' ]
+        activerecord: [ '5.1.7', '5.2.4.4', '6.1.0' ]
         exclude:
           - ruby: '2.3'
             activerecord: '6.1.0' # rails 6 requires ruby >= 2.5
@@ -25,6 +25,6 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
       - name: Install dependencies
-        run: BUNDLE_GEMFILE=../gemfiles/activerecord_${{matrix.activerecord}}.gemfile bundle install --jobs 4
+        run: BUNDLE_GEMFILE=./gemfiles/activerecord_${{matrix.activerecord}}.gemfile bundle install --jobs 4
       - name: Test with activerecord ${{matrix.activerecord}}
-        run: BUNDLE_GEMFILE=../gemfiles/activerecord_${{matrix.activerecord}}.gemfile bundle exec rake
+        run: BUNDLE_GEMFILE=./gemfiles/activerecord_${{matrix.activerecord}}.gemfile bundle exec rake
