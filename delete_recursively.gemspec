@@ -26,7 +26,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'activerecord', '>= 4.1.14', '< 7.0.0'
 
   s.add_development_dependency 'appraisal', '~> 2.3'
-  s.add_development_dependency 'byebug', '~> 11.1'
   s.add_development_dependency 'codecov', '~> 0.2'
   s.add_development_dependency 'rails', '>= 4.1.14', '< 7.0.0'
   s.add_development_dependency 'rake', '~> 13.0'
