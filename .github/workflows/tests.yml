@@ -16,7 +16,7 @@ jobs:
           - ruby: 'ruby-head'
             activerecord: '5.1.7' # rails < 6 crashes on ruby 3 due to kwargs changes
           - ruby: 'ruby-head'
-            activerecord: '5.2.44' # rails < 6 crashes on ruby 3 due to kwargs changes
+            activerecord: '5.2.4.4' # rails < 6 crashes on ruby 3 due to kwargs changes
 
     steps:
       - uses: actions/checkout@v2
