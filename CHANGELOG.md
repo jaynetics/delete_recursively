@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.2
+### Fixed
+- relaxed dependency spec to include rails 7
+
 ## v1.0.1
 ### Fixed
 - fixed LoadError when requiring the gem by adding `version.rb` to the gem files
