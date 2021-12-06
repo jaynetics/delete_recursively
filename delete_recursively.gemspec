@@ -23,11 +23,11 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 2.1.1'
 
-  s.add_dependency 'activerecord', '>= 4.1.14', '< 7.0.0'
+  s.add_dependency 'activerecord', '>= 4.1.14', '< 8.0.0'
 
   s.add_development_dependency 'appraisal', '~> 2.3'
   s.add_development_dependency 'codecov', '~> 0.2'
-  s.add_development_dependency 'rails', '>= 4.1.14', '< 7.0.0'
+  s.add_development_dependency 'rails', '>= 4.1.14', '< 8.0.0'
   s.add_development_dependency 'rake', '~> 13.0'
   s.add_development_dependency 'rspec', '~> 3.10'
   s.add_development_dependency 'rspec-rails', '~> 4.0'

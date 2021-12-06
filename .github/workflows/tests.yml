@@ -9,14 +9,14 @@ jobs:
     strategy:
       matrix:
         ruby: [ '2.3', '2.7', 'ruby-head' ]
-        activerecord: [ '5.1.7', '5.2.4.4', '6.1.0' ]
+        activerecord: [ '5.2.6', '6.1.4.1', '7.0.0.alpha2' ]
         exclude:
           - ruby: '2.3'
-            activerecord: '6.1.0' # rails 6 requires ruby >= 2.5
+            activerecord: '7.0.0.alpha2' # rails 7 requires ruby >= 2.7
+          - ruby: '2.3'
+            activerecord: '6.1.4.1' # rails 6 requires ruby >= 2.5
           - ruby: 'ruby-head'
-            activerecord: '5.1.7' # rails < 6 crashes on ruby 3 due to kwargs changes
-          - ruby: 'ruby-head'
-            activerecord: '5.2.4.4' # rails < 6 crashes on ruby 3 due to kwargs changes
+            activerecord: '5.2.6' # rails < 6 crashes on ruby 3 due to kwargs changes
 
     steps:
       - uses: actions/checkout@v2
