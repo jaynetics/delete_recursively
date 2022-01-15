@@ -102,8 +102,7 @@ module DeleteRecursively
     end
 
     def foreign_key(owner_class, reflection)
-      custom_foreign_key = reflection && reflection.options[:foreign_key]
-      custom_foreign_key || owner_class.to_s.foreign_key
+      reflection && reflection.foreign_key || owner_class.to_s.foreign_key
     end
 
     def all(record_class, criteria = {})
