@@ -7,5 +7,9 @@ require 'delete_recursively'
 
 module DummyRailsApp
   class Application < Rails::Application
+    # silence warning on rails 7
+    if (Rails::VERSION::MAJOR >= 7 rescue false)
+      config.active_record.legacy_connection_handling = false
+    end
   end
 end
