@@ -66,4 +66,15 @@ ActiveRecord::Schema.define(version: 20151110173325) do
   create_table 'letters', force: :cascade do |t|
     t.integer 'letterbox_id'
   end
+
+  ######
+
+  create_table 'prices', force: :cascade do |t|
+    t.integer 'delivery_service_id'
+    t.integer 'product_id'
+    t.string 'product_type'
+  end
+
+  create_table 'doomsday_devices', force: :cascade do |t|
+  end
 end

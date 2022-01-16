@@ -1,30 +1,31 @@
 require 'spec_helper'
 
 describe DeleteRecursively do
+  let(:blog_with_posts_and_comments) do
+    blog = Blog.create!
+    posts = [blog.posts.create!,
+            blog.posts.create!]
+    comments = [posts[0].comments.create!,
+                posts[1].comments.create!]
+    blog
+  end
+
   describe 'dependent: :delete_recursively' do
     it 'deletes all dependent records when a record is destroyed' do
-      blog = Blog.create!
-      posts = [blog.posts.create!,
-               blog.posts.create!]
-      comments = [posts[0].comments.create!,
-                  posts[1].comments.create!]
-
-      blog.destroy!
-
-      expect(Blog.where(id: blog.id).count).to eq(0)
-      expect(Post.where(id: posts.map(&:id)).count).to eq(0)
-      expect(Comment.where(id: comments.map(&:id)).count).to eq(0)
+      blog = blog_with_posts_and_comments
+      expect { blog.destroy! }
+        .to change { Blog.count }.to(0)
+        .and change { Post.count }.to(0)
+        .and change { Comment.count }.to(0)
     end
 
     it 'uses #destroy to delete records associated as dependent: :destroy' do
-      blog = Blog.create!
-      post = blog.posts.create!
-      3.times { post.comments.create! }
+      blog = blog_with_posts_and_comments
 
       expect(Rails.logger)
         .to receive(:info)
         .with('Comment destroy callback!')
-        .exactly(3).times
+        .exactly(2).times
 
       blog.destroy!
     end
@@ -35,11 +36,10 @@ describe DeleteRecursively do
       pizza.box = Box.create!
       pizza.save!
 
-      delivery_service.destroy!
-
-      expect(DeliveryService.where(id: delivery_service.id).count).to eq(0)
-      expect(Pizza.where(id: pizza.id).count).to eq(0)
-      expect(Box.where(id: pizza.box.id).count).to eq(0)
+      expect { delivery_service.destroy! }
+        .to change { DeliveryService.count }.to(0)
+        .and change { Pizza.count }.to(0)
+        .and change { Box.count }.to(0)
     end
 
     it 'works on has_many: :through associations' do
@@ -51,11 +51,10 @@ describe DeleteRecursively do
                      renters.last.letterboxes.create!,
                      renters.last.letterboxes.create!]
 
-      house.destroy!
-
-      expect(House.where(id: house.id).count).to eq(0)
-      expect(Renter.where(id: renters.map(&:id)).count).to eq(0)
-      expect(Letterbox.where(id: letterboxes.map(&:id)).count).to eq(0)
+      expect { house.destroy! }
+        .to change { House.count }.to(0)
+        .and change { Renter.count }.to(0)
+        .and change { Letterbox.count }.to(0)
     end
 
     it 'deletes sub-associations with dependent: :delete, but none below those' do
@@ -70,12 +69,11 @@ describe DeleteRecursively do
                  letterboxes.first.letters.create!,
                  letterboxes.last.letters.create!]
 
-      house.destroy!
-
-      expect(House.where(id: house.id).count).to eq(0)
-      expect(Renter.where(id: renters.map(&:id)).count).to eq(0)
-      expect(Letterbox.where(id: letterboxes.map(&:id)).count).to eq(0)
-      expect(Letter.where(id: letters.map(&:id)).count).to eq(3)
+      expect { house.destroy! }
+        .to change { House.count }.to(0)
+        .and change { Renter.count }.to(0)
+        .and change { Letterbox.count }.to(0)
+        .and change { Letter.count }.by(0) # note the `by`
     end
 
     it 'does not delete records without a dependent option' do
@@ -86,9 +84,8 @@ describe DeleteRecursively do
 
       flavor = pizza.flavors.create!
 
-      delivery_service.destroy!
-
-      expect(Flavor.where(id: flavor.id).count).to eq(1)
+      expect { delivery_service.destroy! }
+        .to change { Flavor.count }.by(0)
     end
 
     # belongs_to is the only association type that needs a unique handling if it
@@ -100,10 +97,9 @@ describe DeleteRecursively do
       pizza.programmer = Programmer.create!
       pizza.save!
 
-      pizza.destroy!
-
-      expect(Pizza.where(id: pizza.id).count).to eq(0)
-      expect(Programmer.where(id: pizza.programmer.id).count).to eq(0)
+      expect { pizza.destroy! }
+        .to change { Pizza.count }.to(0)
+        .and change { Programmer.count }.to(0)
     end
 
     it 'works on belongs_to: associations further down the chain' do
@@ -112,11 +108,10 @@ describe DeleteRecursively do
       pizza.programmer = Programmer.create!
       pizza.save!
 
-      delivery_service.destroy!
-
-      expect(DeliveryService.where(id: delivery_service.id).count).to eq(0)
-      expect(Pizza.where(id: pizza.id).count).to eq(0)
-      expect(Programmer.where(id: pizza.programmer.id).count).to eq(0)
+      expect { delivery_service.destroy! }
+        .to change { DeliveryService.count }.to(0)
+        .and change { Pizza.count }.to(0)
+        .and change { Programmer.count }.to(0)
     end
 
     it 'works with a custom :class_name' do
@@ -125,11 +120,10 @@ describe DeleteRecursively do
       toppings = [pizza.toppings.create!,
                   pizza.toppings.create!]
 
-      delivery_service.destroy!
-
-      expect(DeliveryService.where(id: delivery_service.id).count).to eq(0)
-      expect(Pizza.where(id: pizza.id).count).to eq(0)
-      expect(Ingredient.where(id: toppings.map(&:id)).count).to eq(0)
+      expect { delivery_service.destroy! }
+        .to change { DeliveryService.count }.to(0)
+        .and change { Pizza.count }.to(0)
+        .and change { Ingredient.count }.to(0)
     end
 
     it 'works on records with a custom :primary_key' do
@@ -141,13 +135,35 @@ describe DeleteRecursively do
       other_tasks = [other_project.tasks.create!(my_primary_key: 'task_3'),
                      other_project.tasks.create!(my_primary_key: 'task_4')]
 
-      project.destroy!
+      expect { project.destroy! }
+        .to change { Project.ids }.to([other_project.id])
+        .and change { Task.ids }.to(other_tasks.map(&:id))
+    end
 
-      expect(Project.where(my_primary_key: project.my_primary_key).count).to eq(0)
-      expect(Task.where(my_primary_key: tasks.map(&:my_primary_key)).count).to eq(0)
+    it 'works on polymorphic associations' do
+      price = Price.create!
+      pizza = Pizza.create!(price: price)
+      pizza.save!
+      pizza.toppings.create!
 
-      expect(Project.where(my_primary_key: other_project.my_primary_key).count).to eq(1)
-      expect(Task.where(my_primary_key: other_tasks.map(&:my_primary_key)).count).to eq(2)
+      expect { price.destroy! }
+        .to change { Price.count }.to(0)
+        .and change { Pizza.count }.to(0)
+        .and change { Ingredient.count }.to(0)
+    end
+
+    it 'works on the inverse of polymorphic associations' do
+      # this is also a test of infinite loop avoidance, because
+      # dependent: :delete_recursively is defined both ways in this case.
+      price = Price.create!
+      doomsday_device = DoomsdayDevice.create!(price: price)
+
+      other_price = Price.create!
+      other_doomsday_device = DoomsdayDevice.create!(price: other_price)
+
+      expect { doomsday_device.destroy! }
+        .to change { DoomsdayDevice.pluck(:id) }.to([other_doomsday_device.id])
+        .and change { Price.pluck(:id) }.to([other_price.id])
     end
   end
 
@@ -155,11 +171,10 @@ describe DeleteRecursively do
     it 'deletes all class records and all records of dependent classes' do
       2.times { Blog.create! && Post.create! && Comment.create! }
 
-      DeleteRecursively.all(Blog)
-
-      expect(Blog.count).to eq(0)
-      expect(Post.count).to eq(0)
-      expect(Comment.count).to eq(0)
+      expect { DeleteRecursively.all(Blog) }
+        .to change { Blog.count }.to(0)
+        .and change { Post.count }.to(0)
+        .and change { Comment.count }.to(0)
     end
 
     it 'deletes sub-associations with dependent: :delete, but none below those' do
@@ -174,12 +189,11 @@ describe DeleteRecursively do
                  letterboxes.first.letters.create!,
                  letterboxes.last.letters.create!]
 
-      DeleteRecursively.all(House)
-
-      expect(House.where(id: house.id).count).to eq(0)
-      expect(Renter.where(id: renters.map(&:id)).count).to eq(0)
-      expect(Letterbox.where(id: letterboxes.map(&:id)).count).to eq(0)
-      expect(Letter.where(id: letters.map(&:id)).count).to eq(3)
+      expect { DeleteRecursively.all(House) }
+        .to change  { House.count }.to(0)
+        .and change { Renter.count }.to(0)
+        .and change { Letterbox.count }.to(0)
+        .and change { Letter.count }.by(0) # note the `by`
     end
 
     it 'takes a criteria argument' do
@@ -188,11 +202,10 @@ describe DeleteRecursively do
       Post.first.update_attribute(:id, 0)
       Comment.first.update_attribute(:id, 0)
 
-      DeleteRecursively.all(Blog, id: 0)
-
-      expect(Blog.count).to eq(1)
-      expect(Post.count).to eq(1)
-      expect(Comment.count).to eq(1)
+      expect { DeleteRecursively.all(Blog, id: 0) }
+        .to change { Blog.ids }.to([Blog.last.id])
+        .and change { Post.ids }.to([Post.last.id])
+        .and change { Comment.ids }.to([Comment.last.id])
 
       # clean up
       DeleteRecursively.all(Blog)
@@ -201,30 +214,55 @@ describe DeleteRecursively do
     it 'applies criteria only to models that have corresponding columns' do
       2.times { Blog.create! && Post.create! && Comment.create! }
 
-      DeleteRecursively.all(Blog, inexistent_column: 'some_value')
-
-      expect(Blog.count).to eq(0)
-      expect(Post.count).to eq(0)
-      expect(Comment.count).to eq(0)
+      expect { DeleteRecursively.all(Blog, inexistent_column: 'some_value') }
+        .to change { Blog.count }.to(0)
+        .and change { Post.count }.to(0)
+        .and change { Comment.count }.to(0)
     end
 
     it 'works with a custom :class_name' do
       2.times { DeliveryService.create! && Pizza.create! && Ingredient.create! }
 
-      DeleteRecursively.all(DeliveryService)
-
-      expect(DeliveryService.count).to eq(0)
-      expect(Pizza.count).to eq(0)
-      expect(Ingredient.count).to eq(0)
+      expect { DeleteRecursively.all(DeliveryService) }
+        .to change { DeliveryService.count }.to(0)
+        .and change { Pizza.count }.to(0)
+        .and change { Ingredient.count }.to(0)
     end
 
     it 'works on records with a custom :primary_key' do
       2.times { Project.create! && Task.create! }
 
-      DeleteRecursively.all(Project)
+      expect { DeleteRecursively.all(Project) }
+        .to change { Project.count }.to(0)
+        .and change { Task.count }.to(0)
+    end
+  end
 
-      expect(Project.count).to eq(0)
-      expect(Task.count).to eq(0)
+  describe 'ActiveRecord::Base#delete_recursively' do
+    it 'deletes the record and its dependent records' do
+      blog = blog_with_posts_and_comments
+
+      # This should not trigger destroy callbacks on the record itself,
+      # but should do so on associations using dependent: :destroy.
+      expect(Rails.logger).not_to receive(:debug).with('Blog destroy callback!')
+      expect(Rails.logger).to receive(:info)
+        .with('Comment destroy callback!')
+        .exactly(2).times
+
+      expect { blog.delete_recursively }
+        .to change { Blog.count }.to(0)
+        .and change { Post.count }.to(0)
+        .and change { Comment.count }.to(0)
+    end
+  end
+
+  describe 'ActiveRecord::Relation#delete_all_recursively' do
+    it 'deletes the records and their dependent records' do
+      blog = blog_with_posts_and_comments
+      relation = Post.limit(1)
+      expect { relation.delete_all_recursively }
+        .to change { Post.count }.from(2).to(1)
+        .and change { Comment.count }.from(2).to(1)
     end
   end
 end

@@ -5,4 +5,5 @@ class Pizza < ApplicationRecord
                       foreign_key: :dish_id,
                       dependent: :delete_recursively
   has_many :flavors
+  has_one :price, as: :product
 end

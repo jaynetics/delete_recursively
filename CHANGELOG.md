@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+### Added
+- support for polymorphic associations
+- `ActiveRecord::Base#delete_recursively`
+- `ActiveRecord::Relation#delete_all_recursively`
+
+### Fixed
+- fixed an infinite loop for bi-directional `dependent: :delete(_recursively)` callbacks
+
 ## v1.0.2
 ### Fixed
 - relaxed dependency spec to include rails 7

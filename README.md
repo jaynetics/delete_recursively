@@ -43,9 +43,24 @@ This will delete `my_blog`, all of it's posts, and all comments belonging to any
 my_blog.destroy
 ```
 
-Note that using `dependent: :delete` ends the recursion. If the Comment model above had any associations, those would not be touched.
+Note that using `dependent: :delete` ends the recursion. If the Comment model above had any further associations, these would not be touched.
+
+### Utility methods
+
+There is also `ActiveRecord::Base#delete_recursively` to recursively delete a single record while skipping its own destroy callbacks, e.g.:
+
+```ruby
+my_blog.delete_recursively
+```
+
+`ActiveRecord::Relation#delete_all_recursively` can be used to delete a bunch of records recursively, e.g.:
+
+```ruby
+Blog.where(user_id: evil_user_id).delete_all_recursively
+```
 
 There is also the utility command `::all` for mass operations. This will delete **all** Blogs, Posts, and Comments (even orphans):
+
 ```ruby
 DeleteRecursively.all(Blog)
 ```
