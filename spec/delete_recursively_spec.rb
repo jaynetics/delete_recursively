@@ -126,6 +126,15 @@ describe DeleteRecursively do
         .and change { Ingredient.count }.to(0)
     end
 
+    it 'works with association with implicit foreign keys that differ from the model name' do
+      baker = Pizza::Baker.create!
+      pizza = Pizza.create!(baker: baker)
+
+      expect { pizza.destroy! }
+        .to change { Pizza::Baker.count }.to(0)
+        .and change { Pizza.count }.to(0)
+    end
+
     it 'works on records with a custom :primary_key' do
       project = Project.create!(my_primary_key: 'project_1')
       tasks = [project.tasks.create!(my_primary_key: 'task_1'),

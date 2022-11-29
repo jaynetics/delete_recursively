@@ -21,45 +21,56 @@ module DeleteRecursively
   # override Association#handle_dependency to apply the new option if it is set
   module DependencyHandling
     def handle_dependency
-      return super unless DeleteRecursively.enabled_for?(self)
+      if DeleteRecursively.enabled_for?(self)
+        delete_dependencies_recursively
+      else
+        super
+      end
+    end
 
+    def delete_dependencies_recursively(force: false)
       if reflection.belongs_to?
         # Special case. The owner is already destroyed at this point,
         # so we cannot use the efficient ::dependent_ids lookup. Note that this
         # only happens for a single entry-record on #destroy, though.
         return unless target = load_target
 
-        DeleteRecursively.delete_records_recursively(target.class, target.id)
+        DeleteRecursively.delete_records_recursively(target.class, target.id, force: force)
       else
-        DeleteRecursively.delete_recursively(reflection, owner.class, owner.id)
+        DeleteRecursively.delete_recursively(reflection, owner.class, owner.id, force: force)
       end
     end
   end
 
   class << self
-    def delete_recursively(reflection, owner_class, owner_ids, seen = [])
+    def delete_recursively(reflection, owner_class, owner_ids, seen: [], force: false)
       # Dependent deletion can be bi-directional, so we need to avoid a loop.
       return if seen.include?(reflection)
 
       seen << reflection
 
       associated_classes(reflection).each do |record_class|
-        record_ids =
-          dependent_ids(owner_class, owner_ids, reflection, record_class)
+        record_ids = nil # fetched only when needed for recursion, deletion, or both
+
         if recurse_on?(reflection)
+          record_ids = dependent_ids(owner_class, owner_ids, reflection, record_class)
           record_class.reflect_on_all_associations.each do |subref|
-            delete_recursively(subref, record_class, record_ids, seen)
+            delete_recursively(subref, record_class, record_ids, seen: seen, force: force)
           end
         end
-        destroy_or_delete(reflection, record_class, record_ids)
+
+        if dest_method = destructive_method(reflection, record_class, record_ids, force: force)
+          record_ids ||= dependent_ids(owner_class, owner_ids, reflection, record_class)
+          record_class.send(dest_method, record_ids)
+        end
       end
     end
 
     def associated_classes(reflection)
       if reflection.polymorphic?
         # This ignores relatives where the inverse relation is not defined.
-        # The alternative would be to expensively select all distinct values
-        # from the *_type column:
+        # The alternative to this approach would be to expensively select
+        # all distinct values from the *_type column:
         # reflection.active_record.distinct.pluck(reflection.foreign_type)
         ActiveRecord::Base.descendants.select do |klass|
           klass.reflect_on_all_associations
@@ -70,18 +81,18 @@ module DeleteRecursively
       end
     end
 
-    def delete_records_recursively(record_class, record_ids)
+    def delete_records_recursively(record_class, record_ids, force: false)
       record_class.reflect_on_all_associations.each do |ref|
-        delete_recursively(ref, record_class, record_ids)
+        delete_recursively(ref, record_class, record_ids, force: force)
       end
       record_class.delete(record_ids)
     end
 
-    def destroy_or_delete(reflection, record_class, record_ids)
-      if destructive?(reflection)
-        record_class.destroy(record_ids)
-      elsif enabled_for?(reflection) || deleting?(reflection)
-        record_class.delete(record_ids)
+    def destructive_method(reflection, record_class, record_ids, force: false)
+      if deleting?(reflection) || force && destructive?(reflection)
+        :delete
+      elsif destructive?(reflection)
+        :destroy
       end
     end
 
@@ -98,7 +109,7 @@ module DeleteRecursively
     end
 
     def deleting?(reflection)
-      %i[delete delete_all].include?(reflection.options[:dependent])
+      [:delete, :delete_all, NEW_DEPENDENT_OPTION].include?(reflection.options[:dependent])
     end
 
     def dependent_ids(owner_class, owner_ids, reflection, assoc_class = nil)
@@ -107,7 +118,7 @@ module DeleteRecursively
         if reflection.polymorphic?
           owners = owners.where(reflection.foreign_type => assoc_class.to_s)
         end
-        owners.pluck(reflection.association_foreign_key).compact
+        owners.pluck(reflection.foreign_key).compact
       elsif reflection.through_reflection
         dependent_ids_with_through_option(owner_class, owner_ids, reflection)
       else # plain `has_many` or `has_one`
@@ -181,14 +192,14 @@ module ActiveRecord
   end
 
   class Base
-    def delete_recursively
-      DeleteRecursively.delete_records_recursively(self.class, id)
+    def delete_recursively(force: false)
+      DeleteRecursively.delete_records_recursively(self.class, id, force: force)
     end
   end
 
   class Relation
-    def delete_all_recursively
-      DeleteRecursively.delete_records_recursively(klass, ids)
+    def delete_all_recursively(force: false)
+      DeleteRecursively.delete_records_recursively(klass, ids, force: force)
     end
   end
 end

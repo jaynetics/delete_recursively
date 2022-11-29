@@ -4,10 +4,13 @@
 ### Added
 - support for polymorphic associations
 - `ActiveRecord::Base#delete_recursively`
+  - an optional `force: true` argument enforces the usage of `#delete` even for `destroy` associations
 - `ActiveRecord::Relation#delete_all_recursively`
+  - an optional `force: true` argument enforces the usage of `#delete` even for `destroy` associations
 
 ### Fixed
 - fixed an infinite loop for bi-directional `dependent: :delete(_recursively)` callbacks
+- fixed handling of `belongs_to` associations with a name that doesn't match the class name and no custom foreign key
 
 ## v1.0.2
 ### Fixed

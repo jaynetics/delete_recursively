@@ -51,6 +51,8 @@ There is also `ActiveRecord::Base#delete_recursively` to recursively delete a si
 
 ```ruby
 my_blog.delete_recursively
+# use `force: true` to call `#delete` even for `destroy` associations
+my_blog.delete_recursively(force: true)
 ```
 
 `ActiveRecord::Relation#delete_all_recursively` can be used to delete a bunch of records recursively, e.g.:
