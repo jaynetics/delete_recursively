@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+## v1.2.0
+### Added
+- support for the inverse of polymorphic associations
+- warning for unresolvable associations
+
+### Fixed
+- error if any polymorphic association in the app has `inverse_of` defined
+  - thanks to [Richard Nienaber](https://github.com/rjnienaber) for the report
+- incomplete deletion of associations that are reached multiple times
+  - i.e. via multiple routes in the sub-association tree of the given record
+
 ## v1.1.0
 ### Added
 - support for polymorphic associations
