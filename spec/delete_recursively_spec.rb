@@ -298,4 +298,13 @@ describe DeleteRecursively do
         .and change { Comment.count }.from(2).to(1)
     end
   end
+
+  describe 'DeleteRecursively::AssociatedClassFinder.warn_empty_result' do
+    it 'works' do
+      ref = Blog.reflect_on_all_associations.find { |r| r.name == :posts } || fail
+      expect do
+        DeleteRecursively::AssociatedClassFinder.send(:warn_empty_result, ref)
+      end.to output(/Blog#posts/).to_stderr
+    end
+  end
 end
