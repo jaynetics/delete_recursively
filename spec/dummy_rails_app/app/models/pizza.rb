@@ -7,4 +7,6 @@ class Pizza < ApplicationRecord
                       dependent: :delete_recursively
   has_many :flavors
   has_one :price, as: :product
+  belongs_to :beneficiary, inverse_of: :compensation,
+             polymorphic: true, optional: true
 end

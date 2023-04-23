@@ -17,3 +17,9 @@ if ENV['DEBUG_SQL']
   Rails.application.config.log_level = :debug
   ActiveRecord::Base.logger = Logger.new(STDOUT)
 end
+
+require 'rspec/rails'
+
+RSpec.configure do |config|
+  config.use_transactional_fixtures = true
+end

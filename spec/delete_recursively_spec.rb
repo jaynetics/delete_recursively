@@ -174,6 +174,33 @@ describe DeleteRecursively do
         .to change { DoomsdayDevice.pluck(:id) }.to([other_doomsday_device.id])
         .and change { Price.pluck(:id) }.to([other_price.id])
     end
+
+    it 'works on the inverse of polymorphic associations with inverse_of' do
+      programmer = Programmer.create!
+      pizza = Pizza.create!(beneficiary: programmer)
+
+      other_programmer = Programmer.create!
+      other_pizza = Pizza.create!(beneficiary: other_programmer)
+
+      expect { programmer.destroy! }
+        .to change { Programmer.pluck(:id) }.to([other_programmer.id])
+        .and change { Pizza.pluck(:id) }.to([other_pizza.id])
+    end
+
+    it 'works on associations reached via multiple routes in the association tree' do
+      programmer1 = Programmer.create!
+      programmer2 = Programmer.create!(colleague: programmer1)
+      # require 'debug';debugger
+      pizza1 = Pizza.create!(beneficiary: programmer1)
+      pizza2 = Pizza.create!(beneficiary: programmer2)
+
+      other_programmer = Programmer.create!
+      other_pizza = Pizza.create!(beneficiary: other_programmer)
+
+      expect { programmer2.destroy! }
+        .to change { Programmer.pluck(:id) }.to([other_programmer.id])
+        .and change { Pizza.pluck(:id) }.to([other_pizza.id])
+    end
   end
 
   describe '::all' do
@@ -215,9 +242,6 @@ describe DeleteRecursively do
         .to change { Blog.ids }.to([Blog.last.id])
         .and change { Post.ids }.to([Post.last.id])
         .and change { Comment.ids }.to([Comment.last.id])
-
-      # clean up
-      DeleteRecursively.all(Blog)
     end
 
     it 'applies criteria only to models that have corresponding columns' do

@@ -7,8 +7,9 @@
   appraise "activerecord-#{version}" do
     gem 'activerecord', version
 
-    group :development do
+    group :development, :test do
       gem 'rails', version
+      remove_gem 'appraisal'
     end
   end
 end

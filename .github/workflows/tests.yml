@@ -24,7 +24,7 @@ jobs:
       CODECOV_TOKEN: '69b1a286-6f1c-4599-b715-74ad2db7728d'
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Ruby ${{ matrix.ruby }}
         uses: ruby/setup-ruby@v1
         with:

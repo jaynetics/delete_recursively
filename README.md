@@ -1,4 +1,3 @@
-
 # DeleteRecursively
 
 [![Gem Version](https://badge.fury.io/rb/delete_recursively.svg)](http://badge.fury.io/rb/delete_recursively)
