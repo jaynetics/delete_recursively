@@ -1,7 +1,7 @@
 module DeleteRecursively::AssociatedClassFinder
   class << self
     def call(reflection)
-      @cache[reflection] ||= find_classes(reflection)
+      cache[reflection] ||= find_classes(reflection)
     end
 
     def clear_cache

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## v1.2.1
+### Fixed
+- NoMethodError when using v1.2.0 without rails. D'oh.
+
 ## v1.2.0
 ### Added
 - support for the inverse of polymorphic associations
