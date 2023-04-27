@@ -1,6 +1,9 @@
 # Changelog
 
 ## Unreleased
+### Fixed
+- fixed unnecessary void DELETE calls for empty relations
+  - thanks to [Richard Nienaber](https://github.com/rjnienaber) for the report
 
 ## v1.2.1
 ### Fixed

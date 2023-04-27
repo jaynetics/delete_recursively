@@ -40,7 +40,7 @@ module DeleteRecursively
 
         if dest_method = destructive_method(reflection, force: force)
           record_ids ||= DependentIdFinder.call(owner_ids, reflection, assoc_class)
-          assoc_class.send(dest_method, record_ids)
+          assoc_class.send(dest_method, record_ids) unless record_ids.empty?
         end
       end
     end

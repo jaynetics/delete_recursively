@@ -30,6 +30,16 @@ describe DeleteRecursively do
       blog.destroy!
     end
 
+    it 'does not trigger DB calls for empty relations' do
+      expect(Post).to receive(:delete)
+      expect(Comment).to receive(:destroy)
+      blog_with_posts_and_comments.destroy!
+
+      expect(Post).not_to receive(:delete)
+      expect(Comment).not_to receive(:destroy)
+      Blog.create!.destroy!
+    end
+
     it 'works on has_one: associations' do
       delivery_service = DeliveryService.create!
       pizza = delivery_service.pizzas.new
