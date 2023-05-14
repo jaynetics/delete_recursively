@@ -7,4 +7,5 @@ gemspec
 group :development, :test do
   # until fix for https://github.com/thoughtbot/appraisal/issues/199 is released
   gem 'appraisal', github: "thoughtbot/appraisal"
+  gem 'simplecov-cobertura'
 end

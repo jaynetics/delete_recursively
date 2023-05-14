@@ -1,9 +1,8 @@
-if ENV['CODECOV_TOKEN'] && RUBY_VERSION >= '3.1.0'
+if ENV['CI'] && RUBY_VERSION.start_with?('3.0')
   require 'simplecov'
+  require 'simplecov-cobertura'
+  SimpleCov.formatter = SimpleCov::Formatter::CoberturaFormatter
   SimpleCov.start
-
-  require 'codecov'
-  SimpleCov.formatter = SimpleCov::Formatter::Codecov
 end
 
 ENV['RAILS_ENV'] ||= 'test'

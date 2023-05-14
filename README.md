@@ -2,7 +2,7 @@
 
 [![Gem Version](https://badge.fury.io/rb/delete_recursively.svg)](http://badge.fury.io/rb/delete_recursively)
 [![Build Status](https://github.com/jaynetics/delete_recursively/workflows/tests/badge.svg)](https://github.com/jaynetics/delete_recursively/actions)
-[![codecov](https://codecov.io/gh/jaynetics/delete_recursively/branch/master/graph/badge.svg)](https://codecov.io/gh/jaynetics/delete_recursively)
+[![Coverage](https://codecov.io/gh/jaynetics/delete_recursively/branch/main/graph/badge.svg?token=unKHgeMBYz)](https://codecov.io/gh/jaynetics/delete_recursively)
 
 This gem adds a new option for ActiveRecord associations:
 
