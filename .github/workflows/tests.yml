@@ -25,6 +25,12 @@ jobs:
             activerecord: '7.0'
           - ruby: '2.7'
             activerecord: '7.1'
+        exclude:
+          # rails < 7.1 crashes on ruby >= 3.4 due to the removal of mutex_m
+          - ruby: 'ruby-head'
+            activerecord: '6.1'
+          - ruby: 'ruby-head'
+            activerecord: '7.0'
 
     steps:
       - uses: actions/checkout@v3
