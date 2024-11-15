@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## v1.2.3
+### Fixed
+- relaxed dependency spec to include rails 8
+
 ## v1.2.2
 ### Fixed
 - fixed unnecessary void DELETE calls for empty relations
