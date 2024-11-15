@@ -5,6 +5,5 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 gemspec
 
 group :development, :test do
-  # until fix for https://github.com/thoughtbot/appraisal/issues/199 is released
-  gem 'appraisal', github: "thoughtbot/appraisal"
+  gem 'appraisal', '3.0.0.rc1'
 end
