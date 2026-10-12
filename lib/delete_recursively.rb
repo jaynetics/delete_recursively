@@ -3,16 +3,16 @@
 #
 # DeleteRecursively
 #
-# Adds a new dependent: option to ActiveRecord associations.
+# Adds a new `dependent:` option to ActiveRecord associations.
 #
 module DeleteRecursively
   NEW_DEPENDENT_OPTION = :delete_recursively
 
-  require_relative File.join('delete_recursively', 'active_record_extensions')
-  require_relative File.join('delete_recursively', 'associated_class_finder')
-  require_relative File.join('delete_recursively', 'dependent_id_finder')
-  require_relative File.join('delete_recursively', 'railtie') if defined?(::Rails::Railtie)
-  require_relative File.join('delete_recursively', 'version')
+  require_relative 'delete_recursively/active_record_extensions'
+  require_relative 'delete_recursively/associated_class_finder'
+  require_relative 'delete_recursively/dependent_id_finder'
+  require_relative 'delete_recursively/railtie' if defined?(::Rails::Railtie)
+  require_relative 'delete_recursively/version'
 
   class << self
     def delete_recursively(reflection, _legacy_arg, owner_ids, seen: [], force: false)
